@@ -74,8 +74,13 @@ def kr_date(timestamp: int) -> str:
 
 
 def setup_fonts() -> None:
-    regular = Path(r"C:\Windows\Fonts\malgun.ttf")
-    bold = Path(r"C:\Windows\Fonts\malgunbd.ttf")
+    regular = Path(os.environ.get("REPORT_KOREAN_FONT_REGULAR", r"C:\Windows\Fonts\malgun.ttf"))
+    bold = Path(os.environ.get("REPORT_KOREAN_FONT_BOLD", r"C:\Windows\Fonts\malgunbd.ttf"))
+    if not regular.is_file() or not bold.is_file():
+        raise FileNotFoundError(
+            "Korean TTF fonts are required. Set REPORT_KOREAN_FONT_REGULAR "
+            "and REPORT_KOREAN_FONT_BOLD to existing .ttf files; see README.md."
+        )
     pdfmetrics.registerFont(TTFont("Malgun", str(regular)))
     pdfmetrics.registerFont(TTFont("MalgunBold", str(bold)))
     pdfmetrics.registerFontFamily("Malgun", normal="Malgun", bold="MalgunBold")
@@ -83,7 +88,7 @@ def setup_fonts() -> None:
     font_manager.fontManager.addfont(str(bold))
     plt.rcParams.update(
         {
-            "font.family": "Malgun Gothic",
+            "font.family": font_manager.FontProperties(fname=str(regular)).get_name(),
             "axes.unicode_minus": False,
             "font.size": 9,
             "axes.titlesize": 12,
@@ -470,7 +475,7 @@ def build_pdf(data: dict, charts: dict[str, Path]) -> None:
         Spacer(1, 5 * mm), P("참고문헌 및 데이터", s["h2"]),
         P("[1] GroupLens Research. MovieLens 1M Dataset. https://grouplens.org/datasets/movielens/1m/<br/>[2] Bloom, B. H. (1970). Space/Time Trade-offs in Hash Coding with Allowable Errors. Communications of the ACM, 13(7), 422-426. DOI: 10.1145/362686.362692<br/>[3] Cormode, G. and Muthukrishnan, S. (2005). An Improved Data Stream Summary: The Count-Min Sketch and its Applications. Journal of Algorithms, 55(1), 58-75.", s["small"]),
         Spacer(1, 6 * mm), P("재현 파일", s["h2"]),
-        P("streaming_experiment.py: 핵심 알고리즘·실험 실행 / results.json 및 CSV: 원시 결과 / make_report.py: 그래프·보고서 생성 / README.md: 실행 방법. 제출자는 동봉된 source ZIP을 GitHub에 공개한 뒤 해당 저장소 URL을 LMS 제출 설명에 기록한다.", s["body"]),
+        P(f"소스 코드와 실행 방법, CSV·JSON 원시 결과는 다음 GitHub 저장소에서 확인할 수 있다.<br/><link href='{REPOSITORY_URL}' color='#176B87'>{REPOSITORY_URL}</link>", s["body"]),
     ]
 
     doc.build(story)
