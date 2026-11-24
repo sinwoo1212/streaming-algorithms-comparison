@@ -4,11 +4,17 @@ MovieLens 1M 평점 스트림을 한 줄씩 읽으며 Bloom Filter와 Count-Min 
 
 ## 실행
 
-1. MovieLens 1M을 내려받아 `work/data/ml-1m/ratings.dat`에 둡니다.
+1. MovieLens 1M을 내려받아 `data/ml-1m/ratings.dat`에 둡니다.
 2. 실험을 실행합니다.
 
 ```powershell
-python work/streaming_experiment.py --ratings work/data/ml-1m/ratings.dat --output work/results
+python streaming_experiment.py --ratings data/ml-1m/ratings.dat --output .
+```
+
+3. 그래프와 PDF 보고서를 다시 생성하려면 다음 명령을 실행합니다.
+
+```powershell
+python make_report.py
 ```
 
 핵심 구현은 Python 표준 라이브러리만 사용합니다. `requirements.txt`의 추가 패키지는 그래프와 PDF 보고서 생성 및 검증에 사용됩니다.
