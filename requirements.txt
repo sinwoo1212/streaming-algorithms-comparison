@@ -1,0 +1,4 @@
+matplotlib==3.10.3
+psutil==7.0.0
+reportlab==5.1.0
+pypdf==7.1.1
